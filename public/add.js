@@ -1,42 +1,143 @@
-// Geo Locate
-let lat, lon;
-if ('geolocation' in navigator) {
-  console.log('geolocation available');
-  navigator.geolocation.getCurrentPosition(async (position) => {
-    let lat, lon, weather, air;
-    try {
-      lat = position.coords.latitude;
-      lon = position.coords.longitude;
-      document.getElementById('latitude').textContent = lat.toFixed(2);
-      document.getElementById('longitude').textContent = lon.toFixed(2);
-      const api_url = `/weather/${lat},${lon}`;
-      const response = await fetch(api_url);
-      const json = await response.json();
-      console.log(json);
-      weather = json.weather;
-      air = json.air_quality.results[0].measurements[4];
-      document.getElementById('description').textContent =
-        weather.weather[0].description;
-      document.getElementById('temperature').textContent = weather.main.temp;
-      document.getElementById('air_value').textContent = air.value;
-      document.getElementById('air_unit').textContent = air.unit;
-    } catch (error) {
-      console.log('there was an error :(');
-      console.error(error);
-    }
+let canvas, video;
 
-    const data = { lat, lon, weather, air };
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    };
-    const db_response = await fetch('/api', options);
-    const db_json = await db_response.json();
-    console.log(db_json);
-  });
-} else {
-  console.log('geolocation not available');
+// Set device location as location values.
+async function getDeviceLocation() {
+  if ('geolocation' in navigator) {
+    console.log('(C) => Geolocation is available for this device.');
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      let dLon = position.coords.longitude;
+      let dLat = position.coords.latitude;
+      console.log(`(C) => Location found: ${dLat}, ${dLon}`);
+      document.getElementById('fLat').value = dLat.toFixed(4);
+      document.getElementById('fLon').value = dLon.toFixed(4);
+    });
+  } else {
+    log.error('(C) => Geolocation is NOT available for this device.');
+  }
 }
+
+// Listener for getting the location of device,
+document.getElementById('get_current').onclick = async () => {
+  console.log('(C) => Actual location has been requested.');
+  getDeviceLocation();
+};
+
+// Listener for removing draw pic.
+document.getElementById('erase_pic').onclick = async () => {
+  console.log('(C) => Remove request listened.');
+  background(0, 0, 90);
+};
+
+// Listener for media dropdown change.
+document.getElementById('pic').onchange = async () => {
+  const selected = document.getElementById('pic').value;
+  remove();
+  new p5();
+  console.log(`(C) => The selected mode is: ${selected}`);
+  if (selected == 'photo') {
+    setPhotoCanvas();
+    document.getElementById('erase_pic').style.display = 'none';
+  } else if (selected == 'drawing') {
+    setDrawingCanvas();
+    document.getElementById('erase_pic').style.display = 'block';
+  }
+};
+
+// Create the draw container.
+async function setDrawingCanvas() {
+  canvas = createCanvas(260, 320);
+  canvas.parent('canvas-container');
+  colorMode(HSB);
+  background(0, 0, 90);
+}
+
+// Create the webcam view.
+async function setPhotoCanvas() {
+  video = createCapture(VIDEO);
+  video.parent('canvas-container');
+  video.size(260, 200);
+}
+
+// Draw over the sketch.
+async function draw() {
+  // stroke(250, 100, 30);
+  if (mouseIsPressed) {
+    stroke((frameCount * 10) % 360, 60, 90);
+    strokeWeight(4);
+    strokeCap(ROUND);
+    line(pmouseX, pmouseY, mouseX, mouseY);
+  }
+}
+
+// Create listener for the submit button.
+document.getElementById('submit').onclick = async () => {
+  console.log('(C) => Submit button is pressed.');
+  const mood = document.getElementById('mood').value;
+  const form_lat = document.getElementById('fLat').value;
+  const form_lon = document.getElementById('fLon').value;
+  const selected_media = document.getElementById('pic').value;
+  let image64;
+  if (selected_media === 'photo') {
+    video.loadPixels();
+    image64 = video.canvas.toDataURL();
+  } else if (selected_media === 'drawing') {
+    canvas.loadPixels();
+    image64 = canvas.elt.toDataURL();
+  }
+
+  const data = {
+    location: { lat: form_lat, lon: form_lon },
+    mood: mood,
+    picture: image64,
+  };
+
+  const post_options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  };
+
+  const fetch_url = '/api';
+
+  console.log(
+    `Fetching ${fetch_url} with the following info: ${JSON.stringify(
+      post_options
+    )}`
+  );
+
+  const response = await fetch(fetch_url, post_options);
+  const res_json = await response.json();
+
+  console.log(res_json);
+
+  document.getElementById('results-container').style.visibility = 'visible';
+
+  document.getElementById('temp').textContent =
+    res_json.weather_information.main.temp;
+  document.getElementById('forecast').textContent =
+    res_json.weather_information.weather[0].description;
+  document.getElementById(
+    'aq_distance'
+  ).textContent = res_json.air_quality_information.results[0].distance.toFixed(
+    0
+  );
+  document.getElementById('aq_value').textContent =
+    res_json.air_quality_information.results[0].measurements[0].value;
+  document.getElementById('aq_unit').textContent =
+    res_json.air_quality_information.results[0].measurements[0].unit;
+  document.getElementById('aq_measure').textContent =
+    res_json.air_quality_information.results[0].measurements[0].parameter;
+  document.getElementById('aq_date').textContent =
+    res_json.air_quality_information.results[0].measurements[0].lastUpdated.split('T')[0];
+  document.getElementById('r_image').src = res_json.image_path;
+  l
+};
+
+window.onclick = (event) => {
+  const container = document.getElementById('results-container');
+  if (event.target == container) {
+    container.style.visibility = 'hidden';
+  }
+};

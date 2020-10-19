@@ -13,18 +13,65 @@
   </head>
   <body>
     <div class="main">
-      <h1>Do I need an umbrella?</h1>
+      <h1>Selfying the weather — add more data.</h1>
+      <p>Feel free to add more data to the database.</p>
+      <form action="">
+        <div class="main-form">
+          <div class="form-element">
+            <h2>Location</h2>
+            <label for="lat">Latitude</label>
+            <input type="text" name="fLat" placeholder="45.735" id="fLat" />
+            <label for="lon">Longitude</label>
+            <input type="text" name="fLon" placeholder="-73.93" id="fLon" />
+            <button type="button" id="get_current">Get current</button>
+          </div>
+          <div class="form-element">
+            <h2>Mood</h2>
+            <label for="mood" style="display: none"
+              >Select how do u feel.</label
+            >
+            <br /><br />
+            <select name="emoji" id="mood" name="mood">
+              <option value="happy">😁</option>
+              <option value="sad">😟</option>
+              <option value="amazed">😮</option>
+              <option value="rainbow">🌈</option>
+              <option value="love">😍</option>
+              <option value="cool">😎</option>
+              <option value="train">🚂</option>
+            </select>
+          </div>
+          <div class="form-element">
+            <h2>Media</h2>
+            <label for="media" style="display: none">Select media type</label>
+            <br /><br />
+            <select name="pic" id="pic" name="media">
+              <option value="drawing">Drawing</option>
+              <option value="photo">Photo</option>
+            </select>
+            <div id="canvas-container"></div>
+            <button type="button" id="erase_pic">Erase pic</button>
+          </div>
+        </div>
+        <button id="submit" type="button">Add data!</button>
+      </form>
 
-      <p>
-        The summary of the weather is <span id="description"></span> with a
-        temperature of <span id="temperature"></span>&deg;C. The concentration
-        of particulate matter is <span id="air_value"></span
-        ><span id="air_unit"></span><br><br>
-      </p>
-      <p>
-        latitude: <span id="latitude"></span>&deg;<br />longitude:
-        <span id="longitude"></span>&deg;
-      </p>
+    </div>
+    <div id="results-container">
+      <div id="results">
+        <p>
+          Did you know that there're <span id="temp"></span>°C at the given
+          location? If you live there you can check it by looking through the
+          window, where you can also see <span id="forecast"></span>. <br /><br> If you care
+          about your lungs, you should also know that at
+          <span id="aq_distance"></span> meters <span id="aq_value"></span
+          ><span id="aq_unit"></span> of <span id="aq_measure"></span> where
+          detected on <span id="aq_date"></span>. <br /><br> Thanks for adding this ⬇️
+          beautiful pic to the database. <br><br>
+          <span id="mood-status"></span>
+        </p>
+        <img src="" id="r_image" alt="Imaged sent to the database." />
+      </div>
     </div>
     <script src="../add.js"></script>
   </body>

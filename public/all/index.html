@@ -1,17 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../style.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../style.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
     <title>All</title>
-</head>
-<body>
-    <div class="main" id="main">
-        <h1>Data Selfie App - All</h1>
-
+  </head>
+  <body>
+    <div class="main all-container" id="main">
+      <h1>Selfying the weather — all the data.</h1>
+      <div id="test">
+        <div id="all-map"></div>
+      </div>
+      <table id="data_table">
+        <tr>
+          <th>Location</th>
+          <th>Date</th>
+          <th>Mood</th>
+          <th>Pic</th>
+          <th>Weather</th>
+          <th>Temp (℃)</th>
+          <th>Air quality</th>
+        </tr>
+      </table>
     </div>
-
-<script src="../list.js"></script>
-</body>
+    <script src="../list.js"></script>
+  </body>
 </html>
