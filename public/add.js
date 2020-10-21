@@ -118,19 +118,24 @@ document.getElementById('submit').onclick = async () => {
     res_json.weather_information.main.temp;
   document.getElementById('forecast').textContent =
     res_json.weather_information.weather[0].description;
-  document.getElementById(
-    'aq_distance'
-  ).textContent = res_json.air_quality_information.results[0].distance.toFixed(
-    0
-  );
-  document.getElementById('aq_value').textContent =
-    res_json.air_quality_information.results[0].measurements[0].value;
-  document.getElementById('aq_unit').textContent =
-    res_json.air_quality_information.results[0].measurements[0].unit;
-  document.getElementById('aq_measure').textContent =
-    res_json.air_quality_information.results[0].measurements[0].parameter;
-  document.getElementById('aq_date').textContent =
-    res_json.air_quality_information.results[0].measurements[0].lastUpdated.split('T')[0];
+  if (res_json.air_quality_information.results.length > 0) {
+    document.getElementById('aq_paragraph').style.display = 'block';
+    document.getElementById(
+      'aq_distance'
+    ).textContent = res_json.air_quality_information.results[0].distance.toFixed(
+      0
+    );
+    document.getElementById('aq_value').textContent =
+      res_json.air_quality_information.results[0].measurements[0].value;
+    document.getElementById('aq_unit').textContent =
+      res_json.air_quality_information.results[0].measurements[0].unit;
+    document.getElementById('aq_measure').textContent =
+      res_json.air_quality_information.results[0].measurements[0].parameter;
+    document.getElementById('aq_date').textContent =
+      res_json.air_quality_information.results[0].measurements[0].lastUpdated.split('T')[0];
+  } else {
+    document.getElementById('aq_paragraph').style.visibility = 'none';
+  }
   document.getElementById('r_image').src = res_json.image_path;
   l
 };
